@@ -1,677 +1,240 @@
 <!DOCTYPE html>
-
-<html lang="pt-BR" data-theme="misto">
-
+<html lang="pt-BR">
 <head>
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-
-<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"/>
-
-<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
-
-<meta charset="utf-8" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<title>Portal da Cidade — Modelo</title>
-
-<meta name="description" content="Modelo de site para portal da cidade: História, Serviços, Eventos e Contato, com tema personalizável, contagem regressiva e carrossel." />
-
-<style>
-
-  /* ======= CONFIGURAÇÕES DE TEMA ======= */
-
-  :root {
-
-    --radius: 14px;
-
-    --shadow: 0 10px 25px rgba(0,0,0,.1);
-
-    --max-w: 1100px;
-
-    /* Cores padrão (misto) */
-
-    --bg: #0f1221; /* fundo escuro azulado */
-
-    --bg-soft: #171a2e;
-
-    --card: #1d2140;
-
-    --text: #e8ecff;
-
-    --muted: #b9c0ff;
-
-    --accent: #8b5cf6; /* roxo "mágico" */
-
-    --accent-2: #22d3ee; /* ciano */
-
-    --ok: #22c55e;
-
-    --warn: #f59e0b;
-
-  }
-
-  /* Tema medieval encantado */
-
-  [data-theme="medieval"] {
-
-    --bg: #0c0a09;
-
-    --bg-soft: #141210;
-
-    --card: #1c1917;
-
-    --text: #fde68a;
-
-    --muted: #fcd34d;
-
-    --accent: #b45309; /* cobre */
-
-    --accent-2: #84cc16;
-
-  }
-
-  /* Tema moderno mágico */
-
-  [data-theme="moderno"] {
-
-    --bg: #0b1020;
-
-    --bg-soft: #101630;
-
-    --card: #111936;
-
-    --text: #f8fafc;
-
-    --muted: #cbd5e1;
-
-    --accent: #6366f1; /* índigo */
-
-    --accent-2: #06b6d4;
-
-  }
-
-  /* ======= RESETO E BASE ======= */
-
-  * { box-sizing: border-box; }
-
-  html { height: 100%; min-height: 100vh; }
-
-  body {
-
-    margin: 0;
-
-    min-height: 100vh;
-
-    height: auto;
-
-    font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-
-    background: radial-gradient(circle at center, rgba(139,92,246,.25) 0%, transparent 70%),
-
-                radial-gradient(circle at 80% 20%, rgba(34,211,238,.18) 0%, transparent 70%),
-
-                var(--bg);
-
-    background-size: cover;
-
-    background-attachment: fixed;
-
-    background-position: center;
-
-    color: var(--text);
-
-  }
-
-  img { max-width: 100%; height: auto; display: block; }
-
-  a { color: var(--accent-2); text-decoration: none; }
-
-  a:hover { text-decoration: underline; }
-
-  .container { width: min(100%, var(--max-w)); margin: 0 auto; padding: 0 1rem; }
-
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
-
-  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.7rem 1rem; border-radius:999px; border:1px solid transparent; cursor:pointer; font-weight:600; }
-
-  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0b0e1a; }
-
-  .btn-ghost { background: transparent; color: var(--text); border-color: rgba(255,255,255,.15); }
-
-  /* ======= HEADER / NAV ======= */
-
-  header { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); background: color-mix(in oklab, var(--bg) 85%, transparent); border-bottom: 1px solid rgba(255,255,255,.07); }
-
-  .nav { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.7rem 0; }
-
-  .brand { display:flex; align-items:center; gap:.75rem; }
-
-  .brand img { width:40px; height:40px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,.15); }
-
-  .brand h1 { font-size:1.1rem; margin:0; letter-spacing:.4px; }
-
-  .menu { display:flex; gap:.6rem; align-items:center; }
-
-  .menu a { padding:.5rem .8rem; border-radius:999px; }
-
-  .menu a:hover, .menu a:focus { background: rgba(255,255,255,.08); outline:none; }
-
-  .theme-switch { display:flex; gap:.4rem; align-items:center; }
-
-  .theme-switch select { background: var(--card); color: var(--text); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:.4rem .8rem; }
-
-  .hamb { display:none; }
-
-  @media (max-width: 800px) {
-
-    .menu { display:none; position:absolute; right:1rem; top:64px; background: var(--bg-soft); padding:.5rem; border-radius: var(--radius); width: calc(100% - 2rem); box-shadow: var(--shadow); flex-direction:column; align-items:stretch; }
-
-    .menu.open { display:flex; }
-
-    .hamb { display:inline-flex; }
-
-  }
-
-  /* ======= HERO ======= */
-
-  .hero { padding: 3rem 0 2rem; }
-
-  .hero-grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:1.5rem; align-items:center; }
-
-  .hero h2 { font-size: clamp(1.8rem, 2.6vw, 2.6rem); margin:.2rem 0 1rem; }
-
-  .pill { display:inline-block; font-size:.85rem; padding:.35rem .7rem; border:1px solid rgba(255,255,255,.15); border-radius:999px; background: rgba(255,255,255,.06); }
-
-  .hero .illustration { aspect-ratio: 16/10; background: linear-gradient(145deg, rgba(139,92,246,.25), rgba(34,211,238,.15)); border:1px dashed rgba(255,255,255,.25); border-radius: var(--radius); display:grid; place-items:center; }
-
-  .hero .illustration span { opacity:.9; }
-
-  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
-
-  /* ======= SEÇÕES ======= */
-
-  section { padding: 2rem 0; }
-
-  section h3 { font-size: clamp(1.4rem, 2.2vw, 2rem); margin:0 0 1rem; }
-
-  .muted { color: var(--muted); }
-
-  /* Texto chamativo para strong */
-
-  strong { color: var(--accent); }
-
-  /* História */
-
-  .historia { display:grid; grid-template-columns: 1fr .9fr; gap:1.3rem; }
-
-  .historia .media { aspect-ratio: 4/3; border-radius: var(--radius); overflow:hidden; border:1px solid rgba(255,255,255,.12); background:#0b0e1a; display:grid; place-items:center; }
-
-  .historia .carrossel { position:relative; overflow:hidden; border-radius: var(--radius); border:1px solid rgba(255,255,255,.12); }
-
-  .historia .slides { display:flex; transition: transform .5s ease; }
-
-  .historia .slide { min-width:100%; aspect-ratio: 4/3; display:grid; place-items:center; background:#0b0e1a; }
-
-  .historia .controls { position:absolute; inset:auto 0 0 0; display:flex; justify-content:space-between; padding:.5rem; background: linear-gradient(to top, rgba(0,0,0,.35), transparent); }
-
-  .historia .dotbar { position:absolute; left:50%; transform:translateX(-50%); bottom:.6rem; display:flex; gap:.4rem; }
-
-  .historia .dot { width:10px; height:10px; border-radius:999px; border:1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.15); cursor:pointer; }
-
-  .historia .dot.active { background: var(--accent-2); border-color: var(--accent-2); }
-
-  @media (max-width: 900px) { .historia { grid-template-columns: 1fr; } }
-
-  /* Serviços */
-
-  .servicos-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; }
-
-  .servico { padding:1rem; border:1px solid rgba(255,255,255,.10); transition:.2s transform; }
-
-  .servico:hover { transform: translateY(-3px); }
-
-  @media (max-width: 900px) { .servicos-grid { grid-template-columns: 1fr 1fr; } }
-
-  @media (max-width: 600px) { .servicos-grid { grid-template-columns: 1fr; } }
-
-  /* Títulos e descrições dos moradores */
-
-  .servico h4 {
-
-    color: var(--accent); /* Use theme accent color */
-
-    font-weight: 700; /* negrito */
-
-    font-size: 1.2rem; /* maior que o texto normal */
-
-    margin-bottom: 0.4rem; /* espaço entre nome e descrição */
-
-  }
-
-  .servico p {
-
-    color: white; /* White text for descriptions */
-
-    font-weight: 400; /* peso normal */
-
-    font-size: 1rem; /* menor que o h4 */
-
-  }
-
-  /* Eventos: Countdown + Carrossel */
-
-  .eventos { display:grid; grid-template-columns: 1fr 1fr; gap:1rem; }
-
-  .countdown { padding:1rem; text-align:center; }
-
-  .time-capsules { display:flex; justify-content:space-between; gap:.5rem; }
-
-  .capsule { flex:1; background: var(--bg-soft); border:1px solid rgba(255,255,255,.12); border-radius: 12px; padding: .8rem .5rem; }
-
-  .capsule .num { font-weight:800; font-size: clamp(1.2rem, 4vw, 2rem); }
-
-  .capsule .lbl { font-size:.8rem; color: var(--muted); letter-spacing:.5px; }
-
-  .eventos .carrossel { position:relative; overflow:hidden; border-radius: var(--radius); border:1px solid rgba(255,255,255,.12); }
-
-  .eventos .slides { display:flex; transition: transform .5s ease; }
-
-  .eventos .slide { min-width:100%; aspect-ratio: 16/9; display:grid; place-items:center; background:#0b0e1a; }
-
-  .eventos .controls { position:absolute; inset:auto 0 0 0; display:flex; justify-content:space-between; padding:.5rem; background: linear-gradient(to top, rgba(0,0,0,.35), transparent); }
-
-  .eventos .dotbar { position:absolute; left:50%; transform:translateX(-50%); bottom:.6rem; display:flex; gap:.4rem; }
-
-  .eventos .dot { width:10px; height:10px; border-radius:999px; border:1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.15); cursor:pointer; }
-
-  .eventos .dot.active { background: var(--accent-2); border-color: var(--accent-2); }
-
-  @media (max-width: 900px) { .eventos { grid-template-columns: 1fr; } }
-
-  /* Rodapé */
-
-  footer { margin-top:2rem; padding:1.2rem 0 2.5rem; border-top:1px solid rgba(255,255,255,.07); color: var(--muted); }
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arena dos Campeões</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { transition: background-color 0.4s ease, color 0.4s ease, transform 0.3s ease; }
+    section { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+    section.visible { opacity: 1; transform: translateY(0); }
+
+    /* Tema Neon */
+    .neon {
+      background: linear-gradient(to right, #1a0033, #000000) !important;
+      color: #ff69b4 !important;
+    }
+    .neon h1, .neon h2, .neon h3, .neon h4, .neon h5, .neon h6 { color: #ff69b4 !important; }
+    .neon em, .neon p { color: #ffffff !important; }
+    .neon nav a { color: #ff69b4 !important; }
+    .neon button {
+      background: #ff4081 !important; color: #fff !important; border: none;
+      border-radius: 6px; padding: 8px 16px; cursor: pointer;
+    }
+    .neon button:hover { background: #ff5c93 !important; }
+    .neon .match, .neon .player {
+      background: #2a002a !important; border: 1px solid #ff69b4 !important;
+      color: #ff69b4 !important;
+    }
+
+    /* Tema Azul Futurista */
+    .futurista {
+      background: linear-gradient(to right, #001f3f, #000000) !important;
+      color: #00c8ff !important;
+    }
+    .futurista h1, .futurista h2, .futurista h3, .futurista h4, .futurista h5, .futurista h6 { color: #00c8ff !important; }
+    .futurista em, .futurista p { color: #e6f7ff !important; }
+    .futurista nav a { color: #00c8ff !important; }
+    .futurista button {
+      background: #007bff !important; color: #fff !important; border: none;
+      border-radius: 6px; padding: 8px 16px; cursor: pointer;
+    }
+    .futurista button:hover { background: #339cff !important; }
+    .futurista #chaveamento div:not([class*="yellow"]) {
+      background: #001a33 !important; color: #00c8ff !important;
+    }
+    .futurista #chaveamento .space-y-4 > div,
+    .futurista #chaveamento .space-y-[4.5rem] > div,
+    .futurista #chaveamento .space-y-[9.5rem] > div,
+    .futurista #chaveamento .space-y-[19rem] > div {
+      background-color: #262626 !important; border: 1px solid #00c8ff !important;
+    }
+
+    /* Tema Medieval */
+    [data-theme="medieval"] {
+      --bg: #0c0a09;
+      --bg-soft: #141210;
+      --card: #1c1917;
+      --text: #fde68a;
+      --muted: #fcd34d;
+      --accent: #b45309;
+      --accent-2: #84cc16;
+    }
+    .medieval { background: var(--bg) !important; color: var(--text) !important; }
+    .medieval header { background: var(--bg-soft) !important; }
+    .medieval nav { background: var(--card) !important; }
+    .medieval .card { background: var(--card) !important; }
+    .medieval h1, .medieval h2, .medieval h3, .medieval h4, .medieval h5, .medieval h6 {
+      color: var(--text) !important;
+    }
+    .medieval .muted-text { color: var(--muted) !important; }
+    .medieval a { color: var(--muted) !important; }
+    .medieval a:hover { color: var(--text) !important; }
+    .medieval .accent-text { color: var(--accent) !important; }
+    .medieval .accent-bg { background: var(--accent) !important; }
+    .medieval .accent-2-bg { background: var(--accent-2) !important; }
+    .medieval button { background: var(--accent) !important; color: var(--bg) !important; }
+    .medieval button:hover { background: #d66411 !important; }
+    .medieval .border-accent { border: 1px solid var(--accent) !important; }
+    .medieval .border-muted { border: 1px solid var(--muted) !important; }
+  </style>
 </head>
 
-<body>
-
-  <!-- ======= CABEÇALHO ======= -->
-
-  <header>
-
-    <div class="container nav" role="navigation" aria-label="Navegação principal">
-
-      <div class="brand">
-
-        <img src="imagens/brasao.png" alt="Brasão de Vale do Espantalho" />
-
-        <h1 id="siteTitle">Vale Do Espantalho</h1>
-
+<body class="font-sans min-h-screen flex flex-col medieval" data-theme="medieval">
+  <header class="shadow-2xl">
+    <div class="max-w-6xl mx-auto flex items-center justify-between p-6 relative">
+      <div class="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg bg-[var(--card)]">
+        <span class="text-xs font-bold text-[var(--text)]">Logo</span>
       </div>
-
-      <nav>
-
-        <button class="btn btn-ghost hamb" aria-expanded="false" aria-controls="menu" id="hambBtn">☰ Menu</button>
-
-        <div id="menu" class="menu" role="menubar">
-
-          <a role="menuitem" href="#historia">História</a>
-
-          <a role="menuitem" href="#eventos">Eventos</a>
-
-          <a role="menuitem" href="site2.html">Reliquia</a>
-
-          <a role="menuitem" href="placar.html">Placar</a>
-
-          <a role="menuitem" href="pvp.html">PvP</a>
-
-          <a role="menuitem" href="breve.html">Em breve...</a>
-
-        </div>
-
-      </nav>
-
-      <div class="theme-switch" aria-label="Seletor de tema">
-
-        <label for="themeSel" class="muted" style="font-size:.9rem">Tema:</label>
-
-        <select id="themeSel" aria-label="Escolha um tema">
-
-          <option value="medieval">Medieval Encantado</option>
-
-          <option value="moderno">Moderno Mágico</option>
-
-          <option value="misto" selected>Misto</option>
-
-        </select>
-
+      <div class="text-center flex-1">
+        <h1 class="text-4xl font-extrabold tracking-wide drop-shadow-lg">Arena dos Campeões</h1>
+        <p class="italic muted-text">Onde heróis e lendas se encontram</p>
       </div>
-
     </div>
-
   </header>
 
-  <!-- ======= HERO ======= -->
+  <nav class="backdrop-blur-md p-4 sticky top-0 z-10 shadow-lg">
+    <ul class="flex space-x-6 justify-center font-semibold">
+      <li><a href="#chaveamento">Chaveamento</a></li>
+      <li><a href="#visitantes">Mural</a></li>
+      <li><a href="#historia">História</a></li>
+      <li><a href="#inscricao">Inscrição</a></li>
+    </ul>
+  </nav>
 
-  <section class="hero">
-
-    <div class="container hero-grid">
-
-      <div>
-
-        <span class="pill">🏰 Portão do Espantalho</span>
-
-        <h2>Bem-vindos</h2>
-
-        <p class="muted">Ao <strong>Vale do Espantalho!</strong> Este portal foi criado para registrar as jornadas dos aventureiros, anunciar vitórias, compartilhar histórias e mostrar a evolução da nossa vila diante dos outros reinos e vales.</p>
-
-        <div style="display:flex; gap:.6rem; margin-top:1rem">
-
-          <a class="btn btn-primary" href="#servicos">Ver Moradores</a>
-
-          <a class="btn btn-ghost" href="#eventos">Próximos Eventos</a>
-
-        </div>
-
-      </div>
-
-      <div class="illustration card">
-
-        <img src="imagens/vila_espantalho.png" alt="Vale do Espantalho" class="muted">
-
-      </div>
-
+  <main class="flex-grow">
+    <div class="text-center mt-6">
+      <button id="toggle-chaveamento" class="accent-bg hover:bg-[#d66411] text-[var(--bg)] font-bold py-2 px-6 rounded-lg shadow-md">
+        Mostrar Chaveamento
+      </button>
     </div>
 
-  </section>
-
-  <!-- ======= HISTÓRIA ======= -->
-
-  <section id="historia" class="container">
-
-    <h3>Conquista do Vale</h3>
-
-    <div class="historia">
-
-      <article class="card" style="padding:1rem;">
-
-        <ul class="muted">
-
-          <li><strong>Espantalho:</strong> Depois da queda do Espantalho, a vila voltou a respirar em paz. Os moradores, antes dominados pelo medo, acenderam fogueiras para celebrar a vitória.</li>
-
-          <li><strong>Rei Goblin:</strong> Em seguida, o Rei Goblin lançou sua ofensiva contra as fronteiras. As tropas inimigas surgiam em ondas, espalhando o caos, mas a coragem e a união prevaleceram. Após uma batalha intensa, o Rei Goblin e seus servos foram derrotados, trazendo fim à ameaça que pairava sobre os vales.</li>
-
-          <li><strong>Aracne:</strong> Por fim, restava ainda um desafio sombrio: o covil das Aracnes. Profundamente enraizado em túneis escuros e cheios de teias, aquele era um território amaldiçoado. A luta foi árdua contra o rei e a rainha aracnídeos, criaturas monstruosas que espalhavam veneno e terror. No entanto, a vitória foi conquistada, e com ela a destruição do covil que por anos havia sido um pesadelo para todos os viajantes.</li>
-
-        </ul>
-
-      </article>
-
-      <div class="carrossel" aria-roledescription="carrossel de imagens históricas">
-
-        <div class="slides" id="historiaSlides">
-
-          <div class="slide"><img src="imagens/espantalho.png" alt="Queda do Espantalho"/></div>
-
-          <div class="slide"><img src="imagens/rei_goblin.png" alt="Batalha contra o Rei Goblin"/></div>
-
-          <div class="slide"><img src="imagens/aracne.png" alt="Covil das Aracnes"/></div>
-
+    <!-- Chaveamento -->
+    <section id="chaveamento" class="max-w-6xl mx-auto mt-10 hidden">
+      <h2 class="text-2xl font-bold mb-6 text-center">Chaveamento do Torneio</h2>
+      <div class="grid grid-cols-4 gap-8">
+        <div class="space-y-4">
+          <div class="p-4 rounded-lg border-accent">Player 1</div>
+          <div class="p-4 rounded-lg border-accent">Player 2</div>
+          <div class="p-4 rounded-lg border-accent">Player 3</div>
+          <div class="p-4 rounded-lg border-accent">Player 4</div>
         </div>
-
-        <div class="controls">
-
-          <button id="historiaPrevSlide" aria-label="Slide anterior">‹</button>
-
-          <button id="historiaNextSlide" aria-label="Próximo slide">›</button>
-
+        <div class="space-y-[4.5rem]">
+          <div class="p-4 rounded-lg border-accent">Vencedor 1</div>
+          <div class="p-4 rounded-lg border-accent">Vencedor 2</div>
         </div>
-
-        <div class="dotbar" id="historiaDotbar">
-
-          <span class="dot active" aria-label="Slide 1"></span>
-
-          <span class="dot" aria-label="Slide 2"></span>
-
-          <span class="dot" aria-label="Slide 3"></span>
-
+        <div class="space-y-[9.5rem]">
+          <div class="p-4 rounded-lg border-accent">Finalista</div>
         </div>
-
+        <div class="space-y-[19rem]">
+          <div class="p-4 rounded-lg border-accent">Campeão</div>
+        </div>
       </div>
-
-    </div>
-
-  </section>
-
-  <!-- ======= MORADORES ======= -->
-
-  <section id="servicos" class="container">
-
-    <h3>Moradores do Vale</h3>
-
-    <p class="muted">Conheça os principais moradores que sustentam a vila com seus ofícios e habilidades.</p>
-
-    <div class="servicos-grid">
-
-      <a class="card servico" href="#" aria-label="Fazendeiro">
-
-        <h4>Fazendeiro</h4>
-
-        <p>Cultiva as terras férteis, garantindo que trigo, vegetais e frutas nunca faltem para o sustento de todos.</p>
-
-      </a>
-
-      <a class="card servico" href="#" aria-label="Ferreiro">
-
-        <h4>Ferreiro</h4>
-
-        <p>Com suas mãos firmes e conhecimento do metal, forja armas e ferramentas, fortalecendo guerreiros e trabalhadores.</p>
-
-      </a>
-
-      <a class="card servico" href="#" aria-label="Mineiro">
-
-        <h4>Mineiro</h4>
-
-        <p>Enfrenta túneis escuros e extrai minérios preciosos, essenciais para o comércio, artesanato e construções da vila.</p>
-
-      </a>
-
-      <a class="card servico" href="#" aria-label="Guarda">
-
-        <h4>Guarda</h4>
-
-        <p>O Guarda protege a vila com coragem e disciplina, patrulhando o vale para manter todos seguros diante de qualquer ameaça.</p>
-
-      </a>
-
-      <a class="card servico" href="#" aria-label="Herbalista">
-
-        <h4>Herbalista</h4>
-
-        <p>Prepara poções e remédios com ervas mágicas, curando feridos e doentes com seu saber ancestral.</p>
-
-      </a>
-
-      <a class="card servico" href="#" aria-label="Joaquim">
-
-        <h4>Joaquim</h4>
-
-        <p>O líder da vila, orienta e organiza todos, garantindo a segurança e o bem-estar da comunidade.</p>
-
-      </a>
-
-    </div>
-
-  </section>
-
-  <!-- ======= EVENTOS ======= -->
-
-  <section id="eventos" class="container">
-
-    <h3>Eventos</h3>
-
-    <div class="eventos">
-
-      <div class="card countdown" aria-live="polite">
-
-        <h4>⏳ Contagem para a Inauguração</h4>
-
-        <div class="time-capsules">
-
-          <div class="capsule"><div class="num" id="dias">0</div><div class="lbl">Dias</div></div>
-
-          <div class="capsule"><div class="num" id="horas">0</div><div class="lbl">Horas</div></div>
-
-          <div class="capsule"><div class="num" id="minutos">0</div><div class="lbl">Minutos</div></div>
-
-          <div class="capsule"><div class="num" id="segundos">0</div><div class="lbl">Segundos</div></div>
-
-        </div>
-
-      </div>
-
-      <div class="carrossel" aria-roledescription="carrossel de imagens">
-
-        <div class="slides" id="eventosSlides">
-
-          <div class="slide"><img src="https://placehold.co/800x400" alt="Evento 1"/></div>
-
-          <div class="slide"><img src="https://placehold.co/800x400" alt="Evento 2"/></div>
-
-          <div class="slide"><img src="https://placehold.co/800x400" alt="Evento 3"/></div>
-
-        </div>
-
-        <div class="controls">
-
-          <button id="eventosPrevSlide" aria-label="Slide anterior">‹</button>
-
-          <button id="eventosNextSlide" aria-label="Próximo slide">›</button>
-
-        </div>
-
-        <div class="dotbar" id="eventosDotbar">
-
-          <span class="dot active" aria-label="Slide 1"></span>
-
-          <span class="dot" aria-label="Slide 2"></span>
-
-          <span class="dot" aria-label="Slide 3"></span>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- ======= RODAPÉ ======= -->
-
-  <footer class="container">
-
-    <p>&copy; 2025 Vale do Espantalho — Todos os direitos reservados.</p>
-
+    </section>
+
+    <!-- Mural de Visitantes -->
+    <section id="visitantes" class="max-w-4xl mx-auto mt-10">
+      <h2 class="text-2xl font-bold mb-6 text-center">Mural de Visitantes</h2>
+      <form id="mural-form" class="flex flex-col gap-4">
+        <input type="text" id="nome-visitante" placeholder="Seu nome" class="p-2 rounded-lg border-muted" required>
+        <textarea id="mensagem-visitante" placeholder="Deixe sua mensagem..." class="p-2 rounded-lg border-muted" required></textarea>
+        <button type="submit" class="accent-bg py-2 px-6 rounded-lg font-bold">Publicar</button>
+      </form>
+      <div id="mural-mensagens" class="mt-6 space-y-4"></div>
+    </section>
+
+    <!-- História -->
+    <section id="historia" class="max-w-4xl mx-auto mt-10 text-center">
+      <h2 class="text-2xl font-bold mb-6">A História da Arena</h2>
+      <p class="leading-relaxed">
+        Desde eras antigas, guerreiros lendários se reúnem na Arena dos Campeões para decidir quem merece o título de maior herói de todos os tempos.
+      </p>
+    </section>
+
+    <!-- Inscrição -->
+    <section id="inscricao" class="max-w-4xl mx-auto mt-10">
+      <h2 class="text-2xl font-bold mb-6 text-center">Inscreva-se no Torneio</h2>
+      <form id="inscricao-form" class="flex flex-col gap-4">
+        <input type="text" id="nome-jogador" placeholder="Nome do jogador" class="p-2 rounded-lg border-muted" required>
+        <input type="text" id="classe-jogador" placeholder="Classe (ex: Guerreiro, Mago...)" class="p-2 rounded-lg border-muted" required>
+        <button type="submit" class="accent-bg py-2 px-6 rounded-lg font-bold">Inscrever</button>
+      </form>
+      <div id="lista-inscritos" class="mt-6 space-y-2"></div>
+    </section>
+  </main>
+
+  <footer class="text-center py-6 mt-12 shadow-inner bg-[var(--card)]">
+    <p class="muted-text">Arena dos Campeões © 2025 - Todos os direitos reservados</p>
   </footer>
 
   <script>
-
-    // ======= TROCA DE TEMA =======
-
-    const themeSel = document.getElementById('themeSel');
-
-    themeSel.addEventListener('change', e => {
-
-      document.documentElement.setAttribute('data-theme', e.target.value);
-
-    });
-
-    // ======= MENU HAMBURGUER =======
-
-    const hambBtn = document.getElementById('hambBtn');
-
-    const menu = document.getElementById('menu');
-
-    hambBtn.addEventListener('click', () => {
-
-      const expanded = hambBtn.getAttribute('aria-expanded') === 'true';
-
-      hambBtn.setAttribute('aria-expanded', !expanded);
-
-      menu.classList.toggle('open');
-
-    });
-
-    // ======= CARROSSEL GENÉRICO =======
-
-    function setupCarousel(slidesId, prevBtnId, nextBtnId, dotbarId) {
-
-      const slides = document.getElementById(slidesId);
-
-      const slideCount = slides.children.length;
-
-      let currentSlide = 0;
-
-      const dots = document.querySelectorAll(`#${dotbarId} .dot`);
-
-      function showSlide(index) {
-
-        currentSlide = (index + slideCount) % slideCount;
-
-        slides.style.transform = `translateX(-${currentSlide * 100}%)`;
-
-        dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
-
-      }
-
-      document.getElementById(prevBtnId).addEventListener('click', () => showSlide(currentSlide - 1));
-
-      document.getElementById(nextBtnId).addEventListener('click', () => showSlide(currentSlide + 1));
-
-      dots.forEach((dot, i) => dot.addEventListener('click', () => showSlide(i)));
-
+    function salvarLocalStorage(chave, dados) {
+      localStorage.setItem(chave, JSON.stringify(dados));
+    }
+    function carregarLocalStorage(chave) {
+      return JSON.parse(localStorage.getItem(chave)) || [];
     }
 
-    // Inicializar carrossel da seção História
+    // Mural de visitantes
+    const muralForm = document.getElementById("mural-form");
+    const muralMensagens = document.getElementById("mural-mensagens");
+    let mensagens = carregarLocalStorage("mural");
 
-    setupCarousel('historiaSlides', 'historiaPrevSlide', 'historiaNextSlide', 'historiaDotbar');
-
-    // Inicializar carrossel da seção Eventos
-
-    setupCarousel('eventosSlides', 'eventosPrevSlide', 'eventosNextSlide', 'eventosDotbar');
-
-    // ======= CONTAGEM REGRESSIVA =======
-
-    const targetDate = new Date("2025-08-29T17:00:00");
-
-    function updateCountdown(){
-
-      const now = new Date();
-
-      const diff = targetDate - now;
-
-      document.getElementById('dias').textContent = Math.floor(diff/1000/60/60/24);
-
-      document.getElementById('horas').textContent = Math.floor(diff/1000/60/60)%24;
-
-      document.getElementById('minutos').textContent = Math.floor(diff/1000/60)%60;
-
-      document.getElementById('segundos').textContent = Math.floor(diff/1000)%60;
-
+    function renderizarMural() {
+      muralMensagens.innerHTML = "";
+      mensagens.forEach((m) => {
+        const div = document.createElement("div");
+        div.className = "p-4 rounded-lg border-muted";
+        div.innerHTML = `<strong>${m.nome}</strong>: ${m.texto}`;
+        muralMensagens.appendChild(div);
+      });
     }
+    muralForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nome = document.getElementById("nome-visitante").value;
+      const texto = document.getElementById("mensagem-visitante").value;
+      mensagens.push({ nome, texto });
+      salvarLocalStorage("mural", mensagens);
+      renderizarMural();
+      muralForm.reset();
+    });
+    renderizarMural();
 
-    setInterval(updateCountdown,1000);
+    // Inscrição
+    const inscricaoForm = document.getElementById("inscricao-form");
+    const listaInscritos = document.getElementById("lista-inscritos");
+    let inscritos = carregarLocalStorage("inscritos");
 
-    updateCountdown();
+    function renderizarInscritos() {
+      listaInscritos.innerHTML = "";
+      inscritos.forEach((i) => {
+        const div = document.createElement("div");
+        div.className = "p-2 rounded-lg border-muted";
+        div.textContent = `${i.nome} - ${i.classe}`;
+        listaInscritos.appendChild(div);
+      });
+    }
+    inscricaoForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nome = document.getElementById("nome-jogador").value;
+      const classe = document.getElementById("classe-jogador").value;
+      inscritos.push({ nome, classe });
+      salvarLocalStorage("inscritos", inscritos);
+      renderizarInscritos();
+      inscricaoForm.reset();
+    });
+    renderizarInscritos();
 
+    // Mostrar/Ocultar chaveamento
+    const toggleChaveamento = document.getElementById("toggle-chaveamento");
+    const chaveamentoSection = document.getElementById("chaveamento");
+    toggleChaveamento.addEventListener("click", () => {
+      chaveamentoSection.classList.toggle("hidden");
+      toggleChaveamento.textContent = chaveamentoSection.classList.contains("hidden")
+        ? "Mostrar Chaveamento"
+        : "Esconder Chaveamento";
+    });
   </script>
-
 </body>
-
 </html>
