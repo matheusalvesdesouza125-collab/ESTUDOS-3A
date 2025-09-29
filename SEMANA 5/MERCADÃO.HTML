@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mercadão Medieval</title>
+  <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Uncial Antiqua', cursive; margin:0; padding:0; background:#f9f4e7; color:#2c1a0c; text-align:center; }
+    a { text-decoration:none; color:inherit; }
+    header { position:relative; height:400px; overflow:hidden; text-align:center; color:white; }
+    header .banner { background-image: url('https://thumbs.dreamstime.com/b/arte-de-d-pixel-do-mercado-medieval-jogos-no-c%C3%A9u-azul-ai-gerou-da-cidade-322131946.jpg'); background-size: cover; background-position:center; width:100%; height:100%; position:absolute; top:0; left:0; z-index:0; filter:brightness(0.6); }
+    header h1, header p { position:relative; z-index:1; margin:0; padding-top:50px; text-shadow:2px 2px 5px #00000088; }
+    header h1 { font-size:3rem; } header p { font-size:1.2rem; }
+    nav { background:#5a3d1e; padding:12px; box-shadow:0 2px 10px rgba(0,0,0,0.3); }
+    nav a { color:white; margin:0 15px; font-weight:bold; font-size:1.1em; transition:color 0.3s; }
+    nav a:hover { color:#f9f4e7; }
+    main { max-width:1200px; margin:20px auto; padding:0 15px; }
+    section { margin-bottom:40px; }
+    section h2 { font-size:2em; margin-bottom:10px; color:#4e2a09; }
+    .imagens-mercado { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-top:20px; }
+    .imagens-mercado img { width:32%; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); transition: transform 0.2s; }
+    .imagens-mercado img:hover { transform:scale(1.05); }
+    table { width:100%; border-collapse:collapse; margin-top:20px; }
+    table, th, td { border:1px solid #5a3d1e; }
+    th, td { padding:10px; text-align:center; }
+    th { background:#5a3d1e; color:#fff9e6; }
+    .card { background:#fff9e6; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); margin-top:20px; }
+    .lance-btn, .button, .trade-btn { background: linear-gradient(#8b5a2b, #5a3d1e); color:#fff9e6; border:none; padding:12px 24px; border-radius:6px; cursor:pointer; margin-top:10px; transition: background 0.3s; }
+    .lance-btn:hover, .button:hover, .trade-btn:hover { background: linear-gradient(#a86d34, #6e4821); }
+    .container { display:flex; justify-content:space-around; flex-wrap:wrap; padding:20px; }
+    .player { width:40%; min-width:300px; padding:20px; border:4px solid #5a3d1e; border-radius:12px; background:#fff9e6; box-shadow:0 4px 10px rgba(0,0,0,0.3); margin-bottom:20px; }
+    .player h3 { color:#4e2a09; margin-bottom:10px; }
+    .inventory { display:none; list-style-type:none; padding:0; margin-top:10px; background:#f4ebd0; border-radius:8px; border:2px solid #5a3d1e; }
+    .inventory li { padding:8px; border-bottom:1px solid #a38356; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.1em; transition: background 0.2s; }
+    .inventory li:hover { background-color:#e8dab0; }
+    .inventory li.selected { background-color:#d1ffd1; font-weight:bold; border-left:6px solid #2f6b2f; }
+    .status { margin-top:20px; font-weight:bold; font-size:1.2em; color:#c49b3f; text-shadow:1px 1px 2px #00000033; }
+    .item-image { width:40px; height:40px; object-fit:contain; margin-right:10px; }
+    footer { background:#5a3d1e; color:white; padding:15px; margin-top:40px; }
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <header>
+    <div class="banner"></div>
+    <h1>⚔️ Mercadão 🛡️</h1>
+    <p>Tudo o que você procura, está aqui!</p>
+  </header>
+  <nav>
+    <a href="#mercado">🏪 Mercado</a>
+    <a href="#tabela">📊 Tabela</a>
+    <a href="#leilao">🔨 Leilão</a>
+    <a href="#troca">🤝 Sala de Troca</a>
+    <a href="#contato">📩 Contato</a>
+  </nav>
+  <main>
+    <!-- Mercado -->
+    <section id="mercado">
+      <h2>Mercado</h2>
+      <p>Confira alguns produtos do nosso mercado virtual:</p>
+      <div class="imagens-mercado">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616554.png" alt="Espada">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="Armadura">
+        <img src="https://cdn-icons-png.flaticon.com/512/590/590685.png" alt="Poção">
+      </div>
+    </section>
+
+    <!-- Tabela -->
+    <section id="tabela">
+      <h2>Tabela de Produtos</h2>
+      <table>
+        <tr><th>Produto</th><th>Preço</th><th>Estoque</th></tr>
+        <tr><td>Espada Lendária</td><td>R$ 500</td><td>10</td></tr>
+        <tr><td>Armadura Épica</td><td>R$ 750</td><td>5</td></tr>
+        <tr><td>Poção de Cura</td><td>R$ 50</td><td>50</td></tr>
+      </table>
+    </section>
+
+    <!-- Leilão -->
+    <section id="leilao">
+      <h2>🔨 Leilão ao Vivo</h2>
+      <div class="card">
+        <h3>Configurar Novo Leilão</h3>
+        <input type="text" id="itemLeilao" placeholder="Nome do item">
+        <input type="number" id="lanceMinimo" placeholder="Valor mínimo">
+        <input type="number" id="tempoInicial" placeholder="Tempo em segundos">
+        <button class="lance-btn" onclick="iniciarLeilao()">Iniciar Leilão</button>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <h3>Item em Leilão: <span id="itemAtual">Nenhum</span></h3>
+        <p>Tempo restante: <span id="timer">0</span> s</p>
+        <p>Lance atual: R$ <span id="lanceAtual">0</span></p>
+        <p>Usuário atual: <span id="usuarioAtual">Nenhum</span></p>
+        <p>Vencedor: <span id="vencedor">Nenhum</span></p>
+        <input type="text" id="usuario" placeholder="Seu nome">
+        <input type="number" id="lance" placeholder="Digite seu lance">
+        <button class="lance-btn" onclick="darLance()">Dar Lance</button>
+      </div>
+    </section>
+
+    <!-- Sala de Troca -->
+    <section id="troca">
+      <h2>🤝 Sala de Troca Medieval</h2>
+      <div class="container">
+        <div class="player" id="player1">
+          <h3>Jogador 1</h3>
+          <button class="trade-btn" onclick="participar('player1')">Participar da Troca</button>
+          <button class="trade-btn" onclick="sair('player1')">Sair da Troca</button>
+          <button class="trade-btn" onclick="resetTroca()">Resetar Trocas</button>
+          <button class="button" onclick="toggleInventory('player1')">📜 Abrir Inventário</button>
+          <ul class="inventory" id="inventory-player1"></ul>
+          <button class="button" onclick="aprovar('player1')">✅ Aprovar Troca</button>
+        </div>
+        <div class="player" id="player2">
+          <h3>Jogador 2</h3>
+          <button class="trade-btn" onclick="participar('player2')">Participar da Troca</button>
+          <button class="trade-btn" onclick="sair('player2')">Sair da Troca</button>
+          <button class="trade-btn" onclick="resetTroca()">Resetar Trocas</button>
+          <button class="button" onclick="toggleInventory('player2')">📜 Abrir Inventário</button>
+          <ul class="inventory" id="inventory-player2"></ul>
+          <button class="button" onclick="aprovar('player2')">✅ Aprovar Troca</button>
+        </div>
+      </div>
+      <div class="status" id="status"></div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato">
+      <h2>Contato</h2>
+      <p>📩 Envie-nos um e-mail: <strong>contato@mercadaomedieval.com</strong></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Mercadão Medieval</p>
+  </footer>
+
+  <script>
+    // ===================== Firebase =====================
+    const firebaseConfig = {
+      apiKey: "AIzaSyDT0bGAvX7MyLdw3RM8Jskw5T1-2jTnfoE",
+      authDomain: "mercadao-6e54a.firebaseapp.com",
+      databaseURL: "https://mercadao-6e54a-default-rtdb.firebaseio.com",
+      projectId: "mercadao-6e54a",
+      storageBucket: "mercadao-6e54a.firebasestorage.app",
+      messagingSenderId: "603229319192",
+      appId: "1:603229319192:web:dab73e539880e6f328536d",
+      measurementId: "G-GBCKDBJ83Q"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // ===================== Leilão =====================
+    let auctionTimer = null;
+    let currentTimeRemaining = 0;
+
+    function iniciarLeilao() {
+      db.ref('auctions/auction1').once('value')
+        .then(snapshot => {
+          const auction = snapshot.val();
+          if (auction && auction.active) {
+            alert('Já existe um leilão ativo. Encerre-o antes de iniciar um novo.');
+            return;
+          }
+          const itemLeilao = document.getElementById('itemLeilao');
+          const lanceMinimo = document.getElementById('lanceMinimo');
+          const tempoInicial = document.getElementById('tempoInicial');
+          const itemAtual = document.getElementById('itemAtual');
+          const lanceAtual = document.getElementById('lanceAtual');
+          const timer = document.getElementById('timer');
+          const usuarioAtual = document.getElementById('usuarioAtual');
+          const vencedor = document.getElementById('vencedor');
+
+          if (!itemLeilao || !lanceMinimo || !tempoInicial || !itemAtual || !lanceAtual || !timer || !usuarioAtual || !vencedor) {
+            console.error('DOM elements for auction not found');
+            alert('Erro: Elementos do leilão não encontrados.');
+            return;
+          }
+
+          const item = itemLeilao.value.trim();
+          const minBid = parseFloat(lanceMinimo.value);
+          const time = parseInt(tempoInicial.value);
+
+          if (!item || isNaN(minBid) || isNaN(time) || minBid <= 0 || time <= 0) {
+            alert('Por favor, preencha todos os campos corretamente.');
+            console.warn('Invalid auction inputs:', { item, minBid, time });
+            return;
+          }
+
+          const auctionData = {
+            item: item,
+            currentBid: minBid,
+            timeRemaining: time,
+            currentUser: 'Nenhum',
+            active: true
+          };
+
+          if (auctionTimer) {
+            clearInterval(auctionTimer);
+          }
+
+          db.ref('auctions/auction1').set(auctionData)
+            .then(() => {
+              console.log('Auction started:', auctionData);
+              itemAtual.textContent = item;
+              lanceAtual.textContent = minBid;
+              timer.textContent = time;
+              usuarioAtual.textContent = 'Nenhum';
+              vencedor.textContent = 'Nenhum';
+              itemLeilao.value = '';
+              lanceMinimo.value = '';
+              tempoInicial.value = '';
+
+              startAuctionTimer(time);
+            })
+            .catch(error => {
+              console.error('Failed to start auction:', error);
+              alert('Erro ao iniciar o leilão. Verifique o console.');
+            });
+        })
+        .catch(error => {
+          console.error('Failed to check active auction:', error);
+          alert('Erro ao verificar leilão ativo.');
+        });
+    }
+
+    function startAuctionTimer(initialTime) {
+      currentTimeRemaining = initialTime;
+
+      if (auctionTimer) {
+        clearInterval(auctionTimer);
+      }
+
+      auctionTimer = setInterval(() => {
+        currentTimeRemaining--;
+        document.getElementById('timer').textContent = currentTimeRemaining;
+
+        db.ref('auctions/auction1').update({ timeRemaining: currentTimeRemaining })
+          .catch(error => {
+            console.error('Failed to update timeRemaining:', error);
+            alert('Erro ao atualizar o tempo do leilão.');
+          });
+
+        if (currentTimeRemaining <= 0) {
+          clearInterval(auctionTimer);
+          db.ref('auctions/auction1').once('value').then(snapshot => {
+            const auction = snapshot.val();
+            const vencedor = document.getElementById('vencedor');
+            if (auction && auction.currentUser !== 'Nenhum') {
+              vencedor.textContent = `${auction.currentUser} ganhou o leilão do item ${auction.item}!`;
+            } else {
+              vencedor.textContent = 'Nenhum lance foi dado.';
+            }
+            db.ref('auctions/auction1').update({ active: false })
+              .then(() => {
+                console.log('Auction ended');
+                document.getElementById('itemAtual').textContent = 'Nenhum';
+                document.getElementById('lanceAtual').textContent = 0;
+                document.getElementById('timer').textContent = 0;
+                document.getElementById('usuarioAtual').textContent = 'Nenhum';
+                alert('Leilão encerrado!');
+              })
+              .catch(error => {
+                console.error('Failed to end auction:', error);
+                alert('Erro ao encerrar o leilão.');
+              });
+          });
+        }
+      }, 1000);
+    }
+
+    function darLance() {
+      const usuario = document.getElementById('usuario');
+      const lance = document.getElementById('lance');
+      const lanceAtual = document.getElementById('lanceAtual');
+      const usuarioAtual = document.getElementById('usuarioAtual');
+      const timer = document.getElementById('timer');
+      const vencedor = document.getElementById('vencedor');
+
+      if (!usuario || !lance || !lanceAtual || !usuarioAtual || !timer || !vencedor) {
+        console.error('DOM elements for bidding not found');
+        alert('Erro: Elementos do lance não encontrados.');
+        return;
+      }
+
+      const user = usuario.value.trim();
+      const bid = parseFloat(lance.value);
+
+      if (!user || isNaN(bid) || bid <= 0) {
+        alert('Por favor, insira um nome válido e um lance maior que 0.');
+        console.warn('Invalid bid inputs:', { user, bid });
+        return;
+      }
+
+      db.ref('auctions/auction1').once('value')
+        .then(snapshot => {
+          const auction = snapshot.val();
+          if (!auction || !auction.active) {
+            alert('Nenhum leilão ativo no momento.');
+            console.warn('No active auction found');
+            return;
+          }
+
+          const currentBid = parseFloat(auction.currentBid);
+          if (bid <= currentBid) {
+            alert('O lance deve ser maior que o lance atual (R$' + currentBid + ').');
+            console.warn('Bid too low:', bid, 'Current:', currentBid);
+            return;
+          }
+
+          // Verifica se o tempo restante é menor que 20 segundos
+          let newTimeRemaining = auction.timeRemaining;
+          if (newTimeRemaining < 20 && newTimeRemaining > 0) {
+            newTimeRemaining += 10; // Adiciona 10 segundos
+            console.log('Added 10 seconds to auction time:', newTimeRemaining);
+          }
+
+          // Atualiza o lance e, se necessário, o tempo no Firebase
+          const updates = {
+            currentBid: bid,
+            currentUser: user
+          };
+          if (newTimeRemaining !== auction.timeRemaining) {
+            updates.timeRemaining = newTimeRemaining;
+            currentTimeRemaining = newTimeRemaining; // Atualiza o temporizador local
+            startAuctionTimer(newTimeRemaining); // Reinicia o temporizador com o novo tempo
+          }
+
+          db.ref('auctions/auction1').update(updates)
+            .then(() => {
+              console.log('Bid placed:', { user, bid, newTimeRemaining });
+              lanceAtual.textContent = bid;
+              usuarioAtual.textContent = user;
+              if (newTimeRemaining !== auction.timeRemaining) {
+                timer.textContent = newTimeRemaining;
+              }
+              vencedor.textContent = 'Nenhum'; // Limpa mensagem de vencedor durante o leilão
+              usuario.value = '';
+              lance.value = '';
+            })
+            .catch(error => {
+              console.error('Failed to place bid:', error);
+              alert('Erro ao dar lance. Verifique o console.');
+            });
+        })
+        .catch(error => {
+          console.error('Failed to fetch auction data:', error);
+          alert('Erro ao acessar o leilão. Verifique o console.');
+        });
+    }
+
+    // Real-time auction updates
+    db.ref('auctions/auction1').on('value', snapshot => {
+      const auction = snapshot.val();
+      const itemAtual = document.getElementById('itemAtual');
+      const lanceAtual = document.getElementById('lanceAtual');
+      const timer = document.getElementById('timer');
+      const usuarioAtual = document.getElementById('usuarioAtual');
+      const vencedor = document.getElementById('vencedor');
+
+      if (!itemAtual || !lanceAtual || !timer || !usuarioAtual || !vencedor) {
+        console.error('DOM elements for auction updates not found');
+        return;
+      }
+
+      if (auction && auction.active) {
+        itemAtual.textContent = auction.item || 'Nenhum';
+        lanceAtual.textContent = auction.currentBid || 0;
+        timer.textContent = auction.timeRemaining || 0;
+        usuarioAtual.textContent = auction.currentUser || 'Nenhum';
+        vencedor.textContent = 'Nenhum'; // Garante que não haja mensagem de vencedor durante o leilão
+        // Atualiza o temporizador local se o tempo mudou (por exemplo, por outro usuário)
+        if (auction.timeRemaining !== currentTimeRemaining && auction.timeRemaining > 0) {
+          currentTimeRemaining = auction.timeRemaining;
+          startAuctionTimer(currentTimeRemaining);
+        }
+      } else {
+        if (auctionTimer) {
+          clearInterval(auctionTimer);
+        }
+        itemAtual.textContent = 'Nenhum';
+        lanceAtual.textContent = 0;
+        timer.textContent = 0;
+        usuarioAtual.textContent = 'Nenhum';
+        // Exibe o vencedor apenas se o leilão terminou e houve lances
+        if (auction && auction.currentUser !== 'Nenhum') {
+          vencedor.textContent = `${auction.currentUser} ganhou o leilão do item ${auction.item}!`;
+        } else {
+          vencedor.textContent = 'Nenhum lance foi dado.';
+        }
+      }
+    });
+
+    // ===================== Troca em tempo real =====================
+    const defaultInventories = {
+      player1: ['Espada Lendária', 'Escudo de Ferro', 'Poção de Cura'],
+      player2: ['Armadura de Ferro', 'Machado de Guerra', 'Poção de Força']
+    };
+
+    function getItemImage(item) {
+      const images = {
+        'Espada Lendária': 'https://cdn-icons-png.flaticon.com/512/616/616554.png',
+        'Escudo de Ferro': 'https://cdn-icons-png.flaticon.com/512/616/616554.png',
+        'Poção de Cura': 'https://cdn-icons-png.flaticon.com/512/590/590685.png',
+        'Armadura de Ferro': 'https://cdn-icons-png.flaticon.com/512/616/616430.png',
+        'Machado de Guerra': 'https://cdn-icons-png.flaticon.com/512/616/616554.png',
+        'Poção de Força': 'https://cdn-icons-png.flaticon.com/512/590/590681.png'
+      };
+      return images[item] || 'https://via.placeholder.com/40';
+    }
+
+    // Participar (apenas um slot por navegador)
+    function participar(player) {
+      const ocupado = localStorage.getItem("meuSlot");
+      if (ocupado && ocupado !== player) {
+        alert(`❌ Você já está participando como ${ocupado}. Não pode entrar no outro slot neste navegador.`);
+        return;
+      }
+      db.ref(`trades/trade1/${player}`).once("value").then(snap => {
+        const dados = snap.val();
+        if (dados && dados.participando) {
+          alert("❌ Esse slot já está ocupado!");
+          return;
+        }
+        db.ref(`trades/trade1/${player}`).update({ participando: true });
+        localStorage.setItem("meuSlot", player);
+      });
+    }
+
+    // Sair da troca
+    function sair(player) {
+      const ocupado = localStorage.getItem("meuSlot");
+      if (ocupado !== player) return; // só dono pode sair
+      db.ref(`trades/trade1/${player}`).update({
+        participando: false,
+        selected: null,
+        approved: false,
+        inventarioAberto: false
+      });
+      localStorage.removeItem("meuSlot");
+    }
+
+    // Abrir/fechar inventário (sincronizado)
+    function toggleInventory(player) {
+      const ocupado = localStorage.getItem("meuSlot");
+      if (ocupado !== player) return; // só dono abre/fecha
+      db.ref(`trades/trade1/${player}/inventarioAberto`).once("value").then(snap => {
+        const aberto = snap.val();
+        db.ref(`trades/trade1/${player}/inventarioAberto`).set(!aberto);
+      });
+    }
+
+    // Atualizar inventário na tela
+    function updateInventory(player, data) {
+      const inv = document.getElementById(`inventory-${player}`);
+      inv.innerHTML = '';
+      const items = data?.inventory || defaultInventories[player];
+      const meuSlot = localStorage.getItem("meuSlot");
+
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `<img src="${getItemImage(item)}" class="item-image">${item}`;
+
+        // só dono pode clicar para selecionar
+        if (meuSlot === player) {
+          li.onclick = () => selectItem(player, item);
+        }
+
+        if (data?.selected === item) li.classList.add('selected');
+        inv.appendChild(li);
+      });
+
+      // mostrar conforme Firebase
+      inv.style.display = data?.inventarioAberto ? 'block' : 'none';
+    }
+
+    // Selecionar item
+    function selectItem(player, item) {
+      const ocupado = localStorage.getItem("meuSlot");
+      if (ocupado !== player) return;
+      db.ref(`trades/trade1/${player}`).update({ selected: item, approved: false });
+    }
+
+    // Aprovar troca
+    function aprovar(player) {
+      const ocupado = localStorage.getItem("meuSlot");
+      if (ocupado !== player) return;
+      db.ref(`trades/trade1/${player}/approved`).set(true);
+    }
+
+    // Resetar troca
+    function resetTroca() {
+      db.ref('trades/trade1').set({
+        player1: { inventory: defaultInventories.player1, selected: null, approved: false, participando: false, inventarioAberto: false },
+        player2: { inventory: defaultInventories.player2, selected: null, approved: false, participando: false, inventarioAberto: false }
+      });
+      localStorage.removeItem("meuSlot");
+    }
+
+    // Atualizar status na tela
+    function updateStatus(trade) {
+      const s = document.getElementById('status');
+      const p1 = trade.player1;
+      const p2 = trade.player2;
+      let statusText = '';
+      statusText += `Jogador 1: ${p1.participando ? '✅ entrou' : '❌ saiu'}, `;
+      statusText += `Selecionou: ${p1.selected || 'Nada'}, `;
+      statusText += `Aprovou: ${p1.approved ? '✅' : '❌'}\n`;
+      statusText += `Jogador 2: ${p2.participando ? '✅ entrou' : '❌ saiu'}, `;
+      statusText += `Selecionou: ${p2.selected || 'Nada'}, `;
+      statusText += `Aprovou: ${p2.approved ? '✅' : '❌'}`;
+      s.textContent = statusText;
+    }
+
+    // Observa trocas em tempo real
+    db.ref('trades/trade1').on('value', snap => {
+      const trade = snap.val();
+      if (!trade) return;
+      updateInventory('player1', trade.player1);
+      updateInventory('player2', trade.player2);
+      updateStatus(trade);
+
+      // se ambos aprovaram e selecionaram
+      if (trade.player1.selected && trade.player2.selected && trade.player1.approved && trade.player2.approved) {
+        const temp = trade.player1.selected;
+        db.ref('trades/trade1/player1/inventory').once('value').then(snap1 => {
+          let inv1 = snap1.val();
+          const idx1 = inv1.indexOf(trade.player1.selected);
+          if (idx1 !== -1) inv1.splice(idx1, 1, trade.player2.selected);
+          db.ref('trades/trade1/player1/inventory').set(inv1);
+        });
+        db.ref('trades/trade1/player2/inventory').once('value').then(snap2 => {
+          let inv2 = snap2.val();
+          const idx2 = inv2.indexOf(trade.player2.selected);
+          if (idx2 !== -1) inv2.splice(idx2, 1, temp);
+          db.ref('trades/trade1/player2/inventory').set(inv2);
+        });
+        db.ref('trades/trade1/player1/selected').set(null);
+        db.ref('trades/trade1/player2/selected').set(null);
+        db.ref('trades/trade1/player1/approved').set(false);
+        db.ref('trades/trade1/player2/approved').set(false);
+        document.getElementById('status').textContent = '✅ Troca concluída!';
+      }
+    });
+
+    // Inicializar se não existir
+    db.ref("trades/trade1").once("value").then(snap => {
+      if (!snap.exists()) resetTroca();
+    });
+  </script>
+</body>
+</html>
